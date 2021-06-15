@@ -46,6 +46,7 @@ const App = () => {
 
   // 범위 지정 사각형 생성 함수
   const createBoundary = (canvas) => {
+    console.log(this);
     let mousePressed = false;
     let x = 0;
     let y = 0;
@@ -100,7 +101,6 @@ const App = () => {
         mousePressed = false;
       }
       square = canvas.getActiveObject();
-      console.log(square);
       canvas.add(square);
 
       cutImage(canvas, square);
@@ -111,6 +111,8 @@ const App = () => {
 
   const clearCanvas = (canvas) => {
     canvas.getObjects().forEach((o) => {
+      console.log(o);
+      console.log(canvas.getObjects());
       if (o !== canvas.backgroundImage) {
         canvas.remove(o);
       }
@@ -128,6 +130,27 @@ const App = () => {
     console.log(image);
   };
 
+  const setVideoOnCanvas = (canvas) => {
+    const videoEl = document.querySelector("#video");
+    const video = new fabric.Image(videoEl, {
+      left: 0,
+      top: 0,
+      width: 500,
+      height: 300,
+      angle: 0,
+      originX: 0,
+      originY: 0,
+      objectCaching: true,
+      statefullCache: true,
+    });
+
+    canvas.add(video);
+    fabric.util.requestAnimFrame(function render() {
+      canvas.renderAll();
+      fabric.util.requestAnimFrame(render);
+    });
+  };
+
   const setVideo = (canvas) => {
     const video = document.querySelector("video");
 
@@ -142,6 +165,7 @@ const App = () => {
 
   return (
     <div>
+      <button onClick={() => setVideoOnCanvas(canvas)}>newSetVideo</button>
       <button onClick={() => setVideo(canvas)}>setVideo</button>
       <button onClick={() => createBoundary(canvas)}>Boundary</button>
       <br />
@@ -159,12 +183,13 @@ const App = () => {
 
       <br />
       <br />
-      <canvas id="canvas" ref={canvasRef} controls />
+      <canvas id="canvas" ref={canvasRef} />
       <video
         id="video"
         src="https://www.w3schools.com/html/mov_bbb.mp4"
         width="500"
         height="300"
+        controls
       />
     </div>
   );
