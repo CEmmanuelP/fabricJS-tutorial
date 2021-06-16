@@ -36,3 +36,15 @@
     transform: rotate(360deg);
   }
 }
+
+.containerVideo {
+  background-color: #61dafb;
+}
+
+#canvas {
+  opacity: 0.2;
+  background-color: white;
+  position: absolute;
+  width: 500;
+  height: 300;
+}
