@@ -1,6 +1,8 @@
 import "./App.css";
 import React, { useState, useEffect, useRef } from "react";
 import { fabric } from "fabric";
+import sampleVideo from "./sample_video2.mp4";
+import { Button } from "react-bootstrap";
 
 // 캡쳐 이미지는 세로 길이에 맞춤
 
@@ -29,7 +31,7 @@ const App = () => {
 
   // canvas객체 생성
   const initCanvas = () => new fabric.Canvas("canvas");
-
+  const initCanvas2 = () => new fabric.Canvas("canvas2");
   // const addImg = (e, url, canvi) => {
   //   e.preventDefault();
   //   const img = new Image();
@@ -121,31 +123,38 @@ const App = () => {
   };
 
   const imageCapture = (square) => {
-    console.log(canvasRef.current);
-    console.log(square);
-    console.log(videoRef.current);
-    let w, h, ratio;
+    const video = document.getElementById("video");
+    let w, h, widthRatio, heightRatio;
 
-    // ratio = videoRef.current.width / videoRef.current.height;
+    widthRatio = videoRef.current.videoWidth / 500;
+    heightRatio = videoRef.current.videoHeight / 300;
+
     w = square.width;
     h = square.height;
 
-    // canvasRef2.current.width = w;
-    // canvasRef2.current.height = h;
+    let videoW = videoRef.current.videoWidth;
+    let videoH = videoRef.current.videoHeight;
 
-    const ctx = canvasRef2.current.getContext("2d");
-    // ctx.fillRect(0, 0, w, h);
+    console.log(`videoW: ${videoW}, videoH: ${videoH}`);
+
+    const ctx = canvasRef2.current.getContext("2d", { alpha: false });
+
+    ctx.clearRect(0, 0, canvasRef2.current.width, canvasRef2.current.height);
+
     ctx.drawImage(
       videoRef.current,
-      square.left,
-      square.top,
-      w,
-      h,
+      square.left * widthRatio,
+      square.top * heightRatio,
+      w * widthRatio,
+      h * heightRatio,
       square.left,
       square.top,
       w,
       h
     );
+
+    let capturedImage = canvasRef2.current.toDataURL();
+    console.log(capturedImage);
   };
 
   const clearCanvas = (canvas) => {
@@ -207,19 +216,25 @@ const App = () => {
 
   return (
     <div className="containerVideo">
-      <button onClick={() => setVideo(canvas)}>setVideo</button>
-      <button onClick={() => createBoundary(canvas)}>Boundary</button>
+      <Button onClick={() => setVideo(canvas)}>setVideo</Button>
+      <Button onClick={() => createBoundary(canvas)}>Boundary</Button>
       <br />
       <br />
       <br />
-      <video
-        id="video"
-        src="https://www.w3schools.com/html/mov_bbb.mp4"
-        width="500"
-        height="300"
-        controls
-        ref={videoRef}
-      />
+      <div
+        style={{
+          width: 500,
+          height: 300,
+          left: 0,
+          top: 60,
+          position: "absolute",
+          backgroundColor: "pink",
+        }}
+      >
+        <video id="video" controls width="500" height="300" ref={videoRef}>
+          <source src={sampleVideo} type="video/mp4" />
+        </video>
+      </div>
       <div
         id="canvasWrapper"
         style={{
@@ -227,7 +242,7 @@ const App = () => {
           width: 500,
           height: 300,
           left: 0,
-          top: 72,
+          top: 60,
         }}
       >
         <canvas id="canvas" ref={canvasRef} width="500" height="300" />
